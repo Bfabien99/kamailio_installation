@@ -27,7 +27,13 @@ sleep 0.5
 if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo ":: Kamailio est déjà installé sur ce système."
     sleep 0.5
-    command kamailio -V
+    if command -v kamailio >/dev/null 2>&1; then
+        echo ":: Utilisation de 'kamailio' via le PATH pour afficher la version."
+        kamailio -V
+    else
+        echo ":: 'kamailio' n'est pas dans le PATH, utilisation de /usr/sbin/kamailio."
+        /usr/sbin/kamailio -V
+    fi
     sleep 0.5
     echo "## Fin du programme d'installation de Kamailio"
     exit 0
@@ -153,7 +159,13 @@ sleep 0.5
 if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo "## Installation terminée."
     sleep 0.5
-    command kamailio -V
+    if command -v kamailio >/dev/null 2>&1; then
+        echo ":: Utilisation de 'kamailio' via le PATH pour afficher la version."
+        kamailio -V
+    else
+        echo ":: 'kamailio' n'est pas dans le PATH, utilisation de /usr/sbin/kamailio."
+        /usr/sbin/kamailio -V
+    fi
     sleep 0.5
     echo ":: Kamailio s'est bien installé sur ce système."
     sleep 0.5
