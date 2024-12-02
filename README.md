@@ -52,5 +52,8 @@ Ce sont:
 - Le fichier de configuration est installé dans :
 ```/usr/local/etc/kamailio/kamailio.cfg```
 
+## Plus d'informations
+- [Kaimailio on debian](https://kamailio.org/docs/tutorials/devel/kamailio-install-guide-deb/)
+
 ## Authors
 - [@bfabien99](https://www.github.com/bfabien99)
