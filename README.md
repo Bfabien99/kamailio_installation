@@ -40,7 +40,7 @@ Ce sont:
 ```/usr/lib/kamailio/modules/```
 
 - Sur un système d'exploitation 64 bits, les modules Kamailio sont installés dans :
-```/usr/lib64/kamailio/modules/```
+```/usr/lib64/kamailio/modules/```  ou  ```/usr/lib/x86_64-linux-gnu/kamailio/modules/```
 
 - Les fichiers de documentation et de readme sont installés dans :
 ```/usr/share/doc/kamailio/```
@@ -54,6 +54,7 @@ Ce sont:
 
 ## Plus d'informations
 - [Kaimailio on debian](https://kamailio.org/docs/tutorials/devel/kamailio-install-guide-deb/)
+- [Kaimailio on ubuntu](https://www.atlantic.net/vps-hosting/how-to-install-kamailio-sip-server-on-ubuntu/)
 
 ## Authors
 - [@bfabien99](https://www.github.com/bfabien99)
