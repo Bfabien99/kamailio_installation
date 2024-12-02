@@ -141,7 +141,6 @@ if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo ":: Kamailio a démarré avec succès."
     sleep 0.5
     echo "## Fin de l'installation de Kamailio"
-    exit 0
 else
     echo ":: Kamailio n'a pas été installé correctement." >&2
     exit 1
@@ -161,3 +160,4 @@ fi
 sleep 0.5
 echo ":: Un redémarrage peut être nécessaire pour que tout prenne effet."
 echo "## Fin du programme d'installation de Kamailio"
+exit 0
