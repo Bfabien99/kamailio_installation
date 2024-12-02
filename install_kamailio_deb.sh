@@ -42,8 +42,7 @@ if apt update -y; then
     echo "Mise à jour des dépôts réussie."
 else
     echo "XX Erreur lors de la mise à jour des dépôts. Vérifiez votre connexion réseau ou vos sources APT." >&2
-    echo "## Fin du programme d'installation"
-    exit 1
+    echo "..."
 fi
 
 sleep 0.5
@@ -53,8 +52,7 @@ if apt upgrade -y; then
     echo "Tous les paquets ont été mis à niveau avec succès."
 else
     echo "XX Erreur lors de la mise à niveau des paquets. Vérifiez les journaux pour plus de détails." >&2
-    echo "## Fin du programme d'installation"
-    exit 1
+    echo "..."
 fi
 
 sleep 0.5
