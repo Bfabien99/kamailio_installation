@@ -5,14 +5,14 @@ La distribution prise en charge actuellement est ```debian```
 
 ## Installation
 Pour l'installation, vous pouvez directement lancer le fichier correspondant à votre distribution
-- Pour ```debian``` lancer le fichier ```kamailio_install_deb.sh```
+- Pour ```debian``` lancer le fichier ```install_kamailio_deb.sh```
 
 ```bash
-  ./kamailio_install_deb.sh
+  ./install_kamailio_deb.sh
 ```
-Ou lancer le fichier ```kamailio_install.sh``` et suivre les étapes 
+Ou lancer le fichier ```install_kamailio.sh``` et suivre les étapes 
 ```bash
-    ./kamailio_install
+    ./install_kamailio.sh
 ```
 Il faudra exécuter les différents fichiers en mode ```root```
 
