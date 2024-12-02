@@ -6,7 +6,6 @@ sleep 1
 ## Extraire le nom de code d'Ubuntu
 if [[ -f /etc/os-release ]]; then
     codename=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    echo "Nom de code de votre Ubuntu : $codename"
 else
     echo "XX Impossible de déterminer le nom de code. Assurez-vous que vous utilisez Ubuntu."
     echo "## Fin du programme d'installation"
