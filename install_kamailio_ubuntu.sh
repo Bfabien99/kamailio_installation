@@ -163,9 +163,24 @@ if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     systemctl start kamailio
     sleep 0.5
     echo ":: Kamailio a démarré avec succès."
-    echo "## Fin du programme d'installation de Kamailio"
+    echo "## Fin de l'installation de Kamailio"
     exit 0
 else
     echo ":: Kamailio n'a pas été installé correctement." >&2
     exit 1
 fi
+
+sleep 0.5
+echo "## Ajout des binaires dans le PATH"
+sleep 0.5
+# Ajout de /usr/sbin au PATH s'il n'est pas déjà présent
+if [[ ":$PATH:" != *":/usr/sbin:"* ]]; then
+    PATH=$PATH:/usr/sbin
+    export PATH
+    echo ":: Le dossier /usr/sbin a été ajouté au PATH."
+else
+    echo ":: Le dossier /usr/sbin est déjà dans le PATH."
+fi
+sleep 0.5
+echo ":: Un redémarrage peut être nécessaire pour que tout prenne effet."
+echo "## Fin du programme d'installation de Kamailio"
