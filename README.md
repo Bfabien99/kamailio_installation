@@ -52,6 +52,16 @@ Ce sont:
 - Le fichier de configuration est installé dans :
 ```/etc/kamailio/kamailio.cfg```
 
+## Quelques commandes
+- verifier le path :
+```which kamailio```
+
+- verifier tous les modules disponibles
+```apt search kamailio```
+
+- comment installer le module kamailio-websocket:
+```apt install kamailio-websocket-modules```
+
 ## Plus d'informations
 - [Kaimailio on debian](https://kamailio.org/docs/tutorials/devel/kamailio-install-guide-deb/)
 - [Kaimailio on ubuntu](https://www.atlantic.net/vps-hosting/how-to-install-kamailio-sip-server-on-ubuntu/)
