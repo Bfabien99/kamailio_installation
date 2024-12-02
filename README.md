@@ -1,7 +1,7 @@
 
 # INSTALLATION DE KAMAILIO 5.8
 Installation de kamailio sur différentes distributions.
-La distribution prise en charge actuellement est ```debian```
+Les distributions prises en charge actuellement sont ```debian``` et ```ubuntu```
 
 ## Installation
 Pour l'installation, vous pouvez directement lancer le fichier correspondant à votre distribution
@@ -10,7 +10,7 @@ Pour l'installation, vous pouvez directement lancer le fichier correspondant à 
 ```bash
   ./install_kamailio_deb.sh
 ```
-Ou lancer le fichier ```install_kamailio.sh``` et suivre les étapes 
+Ou lancer le fichier ```install_kamailio.sh``` qui installera kaimailo en fonction de votre distribution 
 ```bash
     ./install_kamailio.sh
 ```
@@ -27,7 +27,7 @@ Il faudra exécuter les différents fichiers en mode ```root```
 
 ## Kamailio binaries
 Les fichiers binaires de Kamailio et les scripts exécutables (outils) sont installés dans:
-```/usr/local/sbin```
+```/usr/sbin```
 
 Ce sont:
 - ```kamailio``` - Exécutable principal du serveur SIP Kamailio
@@ -37,20 +37,20 @@ Ce sont:
 
 ## Fichiers
 - Sur un système d'exploitation 32 bits, les modules Kamailio sont installés dans :
-```/usr/local/lib/kamailio/modules/```
+```/usr/lib/kamailio/modules/```
 
 - Sur un système d'exploitation 64 bits, les modules Kamailio sont installés dans :
-```/usr/local/lib64/kamailio/modules/```
+```/usr/lib64/kamailio/modules/```
 
 - Les fichiers de documentation et de readme sont installés dans :
-```/usr/local/share/doc/kamailio/```
+```/usr/share/doc/kamailio/```
 
 - Les pages de manuel (man) sont installées dans :
-```/usr/local/share/man/man5/```
-```/usr/local/share/man/man8/```
+```/usr/share/man/man5/```
+```/usr/share/man/man8/```
 
 - Le fichier de configuration est installé dans :
-```/usr/local/etc/kamailio/kamailio.cfg```
+```/etc/kamailio/kamailio.cfg```
 
 ## Plus d'informations
 - [Kaimailio on debian](https://kamailio.org/docs/tutorials/devel/kamailio-install-guide-deb/)
