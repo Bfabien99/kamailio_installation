@@ -16,7 +16,7 @@ fi
 sleep 0.5
 ## Vérifier si Kamailio est déjà installé
 echo "## Vérification de l'existence de Kamailio"
-if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
+if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo ":: Kamailio est déjà installé sur ce système."
     echo "## Fin du programme d'installation de Kamailio"
     exit 0
@@ -116,7 +116,7 @@ fi
 
 sleep 0.5
 # Vérification de l'installation de Kamailio
-if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
+if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo "## Installation terminée."
     echo ":: Kamailio s'est bien installé sur ce système."
     echo "## Affichage de la version"
