@@ -158,6 +158,8 @@ sleep 0.5
 # Vérification de l'installation de Kamailio
 if [[ -x /usr/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
     echo "## Installation terminée."
+    PATH="/usr/sbin:$PATH"
+    export PATH
     sleep 0.5
     if command -v kamailio >/dev/null 2>&1; then
         echo ":: Utilisation de 'kamailio' via le PATH pour afficher la version."
