@@ -104,4 +104,20 @@ else
     echo "## Fin du programme d'installation"
     exit 1
 fi
-echo "## Installation terminée."
+
+# Vérification de l'installation de Kamailio
+if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
+    echo "## Installation terminée."
+    echo ":: Kamailio s'est bien installé sur ce système."
+    echo "## Affichage de la version"
+    command kamailio -V
+    echo "## Démarrage de Kamailio"
+    systemctl enable kamailio
+    systemctl start kamailio
+    echo ":: Kamailio a démarré avec succès."
+    echo "## Fin du programme d'installation de Kamailio"
+    exit 0
+else
+    echo ":: Kamailio n'a pas été installé correctement." >&2
+    exit 1
+fi
