@@ -7,6 +7,20 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Vérifier la distribution du système
+if [[ -f /etc/os-release ]]; then
+    distribution=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
+    codename=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
+    if [[ $distribution != 'ubuntu' ]]; then
+        echo ":: XX Votre distribution n'est pas ubuntu... XX"
+        echo "## Fin du programme d'installation"
+        exit 1
+    fi
+else
+    echo "Impossible de déterminer la distribution. Assurez-vous que votre système utilise /etc/os-release."
+    exit 1
+fi
+
 ## Installation de Kamailio sur un système Ubuntu
 echo "## Début de l'installation de Kamailio sur votre système $1"
 sleep 0.5
