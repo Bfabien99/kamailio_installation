@@ -1,11 +1,6 @@
 #!/bin/bash
 
-## Vérifier que le script est lancé en mode root
-if [[ $EUID -ne 0 ]]; then
-    echo ":: XX Ce script doit être exécuté avec des privilèges root. Veuillez réessayer avec 'sudo'." >&2
-    echo "## Fin du programme d'installation"
-    exit 1
-fi
+
 
 # Vérifier la distribution du système
 if [[ -f /etc/os-release ]]; then
