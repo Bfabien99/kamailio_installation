@@ -10,8 +10,16 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 ## Exécution avec le mode su -l
-echo "## Exécution du mode su -l"
-su -l
+# Exécuter une commande spécifique dans le contexte su -l
+su -l -c "echo 'Vous êtes maintenant dans le mode su -l. Exécution d'une commande.' && whoami && exit"
+
+# Poursuite du script après sortie de su -l
+if [[ $? -eq 0 ]]; then
+    echo ":: Retour au script principal. Mode su -l exécuté avec succès."
+else
+    echo ":: XX Une erreur est survenue lors de l'exécution du mode su -l. XX"
+    exit 1
+fi
 
 ## Vérifier la distribution
 if [[ -f /etc/os-release ]]; then
