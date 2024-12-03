@@ -9,6 +9,10 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+## Exécution avec le mode su -l
+echo "## Exécution du mode su -l"
+su -l
+
 ## Vérifier la distribution
 if [[ -f /etc/os-release ]]; then
     distribution=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
@@ -84,22 +88,21 @@ fi
 
 ## Création d'un alias
 # Tester si la commande adduser fonctionne
-if command -v adduser >/dev/null 2>&1 && adduser --help >/dev/null 2>&1; then
-    echo ":: La commande adduser est disponible et fonctionne."
-else
-    echo ":: XX La commande adduser n'est pas disponible ou ne fonctionne pas. XX"
+# if command -v adduser >/dev/null 2>&1 && adduser --help >/dev/null 2>&1; then
+#     echo ":: La commande adduser est disponible et fonctionne."
+# else
+#     echo ":: XX La commande adduser n'est pas disponible ou ne fonctionne pas. XX"
 
-    # Vérifier si /usr/sbin/adduser existe
-    if [[ -x /usr/sbin/adduser ]]; then
-        echo ":: Création d'un alias pour /usr/sbin/adduser..."
-        alias adduser='/usr/sbin/adduser'
-        echo ":: Alias créé pour adduser."
-    else
-        echo ":: XX Impossible de créer un alias : /usr/sbin/adduser introuvable. XX" >&2
-        exit 1
-    fi
-fi
-
+#     # Vérifier si /usr/sbin/adduser existe
+#     if [[ -x /usr/sbin/adduser ]]; then
+#         echo ":: Création d'un alias pour /usr/sbin/adduser..."
+#         alias adduser='/usr/sbin/adduser'
+#         echo ":: Alias créé pour adduser."
+#     else
+#         echo ":: XX Impossible de créer un alias : /usr/sbin/adduser introuvable. XX" >&2
+#         exit 1
+#     fi
+# fi
 
 ## Configuration des services systemd
 echo "## Configuration des services systemd pour Kamailio..."
