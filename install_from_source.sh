@@ -11,15 +11,14 @@ fi
 
 ## Exécution avec le mode su -l
 # Exécuter une commande spécifique dans le contexte su -l
-su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
-
-# Poursuite du script après sortie de su -l
-if [[ $? -eq 0 ]]; then
-    echo ":: Retour au script principal. Mode su -l exécuté avec succès."
-else
-    echo ":: XX Une erreur est survenue lors de l'exécution du mode su -l. XX"
-    exit 1
-fi
+# su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
+# # Poursuite du script après sortie de su -l
+# if [[ $? -eq 0 ]]; then
+#     echo ":: Retour au script principal. Mode su -l exécuté avec succès."
+# else
+#     echo ":: XX Une erreur est survenue lors de l'exécution du mode su -l. XX"
+#     exit 1
+# fi
 
 ## Vérifier la distribution
 if [[ -f /etc/os-release ]]; then
@@ -116,11 +115,15 @@ fi
 echo "## Configuration des services systemd pour Kamailio..."
 if ! make install-systemd-debian || ! systemctl enable kamailio; then
     echo ":: XX La configuration de Kamailio avec systemd a échoué. XX" >&2
-    exit 1
 fi
+systemctl enable kamailio
 systemctl daemon-reload
+
+PATH="/usr/local/sbin:$PATH"
+export PATH
 
 ## Fin
 echo "## Installation et configuration de Kamailio terminées."
 echo ":: Vous pouvez démarrer Kamailio avec 'systemctl start kamailio'."
+kamailio -V
 exit 0
