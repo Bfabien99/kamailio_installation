@@ -24,7 +24,7 @@ echo "## Mise à jour des dépôts APT..."
 sleep 0.5
 if ! apt update -y; then
     echo ":: XX Échec lors de la mise à jour des dépôts APT. XX" >&2
-    exit 1
+    echo "..."
 fi
 
 ## Installation des dépendances
