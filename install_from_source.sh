@@ -9,17 +9,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-## Exécution avec le mode su -l
-# Exécuter une commande spécifique dans le contexte su -l
-# su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
-# # Poursuite du script après sortie de su -l
-# if [[ $? -eq 0 ]]; then
-#     echo ":: Retour au script principal. Mode su -l exécuté avec succès."
-# else
-#     echo ":: XX Une erreur est survenue lors de l'exécution du mode su -l. XX"
-#     exit 1
-# fi
-
 ## Vérifier la distribution
 if [[ -f /etc/os-release ]]; then
     distribution=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
@@ -30,7 +19,26 @@ else
     exit 1
 fi
 
-## Mettre à jour les dépôts APT
+sleep 0.5
+## Vérifier si Kamailio est déjà installé
+echo "## Vérification de l'existence de Kamailio"
+sleep 0.5
+if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
+    echo ":: Kamailio est déjà installé sur ce système."
+    sleep 0.5
+    if command -v kamailio >/dev/null 2>&1; then
+        echo ":: Utilisation de 'kamailio' via le PATH pour afficher la version."
+        kamailio -V
+    else
+        echo ":: 'kamailio' n'est pas dans le PATH, utilisation de /usr/local/sbin/kamailio."
+        /usr/local/sbin/kamailio -V
+    fi
+    sleep 0.5
+    echo "## Fin du programme d'installation de Kamailio"
+    exit 0
+fi
+
+sleep 0.5 ## Mettre à jour les dépôts APT
 echo "## Mise à jour des dépôts APT..."
 sleep 0.5
 if ! apt update -y; then
