@@ -81,7 +81,7 @@ else
     cd "$kamailio_src" || exit
     if git clone --depth 1 --branch 5.8 https://github.com/kamailio/kamailio kamailio; then
         echo ":: Le dépôt Kamailio a été cloné avec succès."
-        cd "/kamailio"
+        cd "kamailio"
     else
         echo ":: XX Échec du clonage du dépôt Git. Vérifiez votre connexion réseau. XX"
         exit 1
