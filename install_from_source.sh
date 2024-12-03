@@ -67,17 +67,24 @@ if ! make include_modules="db_mysql tls" cfg || ! make all || ! make install; th
     exit 1
 fi
 
-# Vérifier et ajouter l'utilisateur système 'kamailio'
-echo "Ajout de l'utilisateur système kamailio..."
-if /usr/sbin/adduser --system --group --no-create-home kamailio >/dev/null 2>&1; then
-    echo ":: Utilisateur 'kamailio' ajouté avec succès."
+## Création d'un alias
+# Tester si la commande adduser fonctionne
+if command -v adduser >/dev/null 2>&1 && adduser --help >/dev/null 2>&1; then
+    echo ":: La commande adduser est disponible et fonctionne."
 else
-    echo ":: XX Échec avec adduser, tentative avec useradd... XX"
-    if ! /usr/sbin/useradd -r -M -s /bin/false kamailio >/dev/null 2>&1; then
-        echo ":: XX Échec complet lors de l'ajout de l'utilisateur système. XX" >&2
+    echo ":: XX La commande adduser n'est pas disponible ou ne fonctionne pas. XX"
+
+    # Vérifier si /usr/sbin/adduser existe
+    if [[ -x /usr/sbin/adduser ]]; then
+        echo ":: Création d'un alias pour /usr/sbin/adduser..."
+        alias adduser='/usr/sbin/adduser'
+        echo ":: Alias créé pour adduser."
+    else
+        echo ":: XX Impossible de créer un alias : /usr/sbin/adduser introuvable. XX" >&2
         exit 1
     fi
 fi
+
 
 ## Configuration des services systemd
 echo "## Configuration des services systemd pour Kamailio..."
