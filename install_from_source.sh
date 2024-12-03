@@ -11,7 +11,7 @@ fi
 
 ## Exécution avec le mode su -l
 # Exécuter une commande spécifique dans le contexte su -l
-su -l -c "echo 'Vous êtes maintenant dans le mode su -l. Exécution d'une commande.' && whoami && exit"
+su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
 
 # Poursuite du script après sortie de su -l
 if [[ $? -eq 0 ]]; then
