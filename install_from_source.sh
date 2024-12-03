@@ -52,13 +52,28 @@ else
 fi
 
 ## Clonage du dépôt Git
-echo "## Clonage du dépôt Kamailio dans $kamailio_src..."
-cd "$kamailio_src"
-if ! git clone --depth 1 --branch 5.8 https://github.com/kamailio/kamailio kamailio; then
-    echo ":: XX Échec du clonage du dépôt Git. Vérifiez votre connexion réseau. XX" >&2
-    exit 1
+# Vérifier si le dépôt a déjà été cloné
+echo "## Vérification de l'existence du dépôt Kamailio dans $kamailio_src..."
+if [[ -d "$kamailio_src/kamailio/.git" ]]; then
+    echo ":: Le dépôt Kamailio est déjà cloné dans $kamailio_src/kamailio."
+    echo ":: Mise à jour du dépôt existant..."
+    cd "$kamailio_src/kamailio" || exit
+    if git pull origin 5.8; then
+        echo ":: Le dépôt Kamailio a été mis à jour avec succès."
+    else
+        echo ":: XX Échec de la mise à jour du dépôt Git. XX" >&2
+        exit 1
+    fi
+else
+    echo ":: Clonage du dépôt Kamailio dans $kamailio_src..."
+    cd "$kamailio_src" || exit
+    if git clone --depth 1 --branch 5.8 https://github.com/kamailio/kamailio kamailio; then
+        echo ":: Le dépôt Kamailio a été cloné avec succès."
+    else
+        echo ":: XX Échec du clonage du dépôt Git. Vérifiez votre connexion réseau. XX" >&2
+        exit 1
+    fi
 fi
-cd kamailio
 
 ## Compilation et installation
 echo "## Compilation et installation de Kamailio avec les modules db_mysql et tls..."
