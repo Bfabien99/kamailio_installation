@@ -151,7 +151,13 @@ sleep 0.5
 ## Fin
 echo "## Installation et configuration de Kamailio terminées."
 echo ":: Vous pouvez démarrer Kamailio avec 'systemctl start kamailio'."
-/usr/local/sbin/kamailio -V
+if command -v kamailio >/dev/null 2>&1; then
+        echo ":: Utilisation de 'kamailio' via le PATH pour afficher la version."
+        kamailio -V
+    else
+        echo ":: X 'kamailio' n'as pas être mis dans le PATH, utilisation de /usr/local/sbin/kamailio.X "
+        /usr/local/sbin/kamailio -V
+    fi
 echo "## Fin du programme d'installation de Kamailio"
 systemctl start kamailio
 exit 0
