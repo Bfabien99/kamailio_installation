@@ -117,13 +117,29 @@ fi
 sleep 0.5
 ## Configuration des services systemd
 echo "## Configuration des services systemd pour Kamailio..."
-su -l
+# Sauvegarder les permissions actuelles de la commande 'adduser'
+original_permissions=$(stat -c "%a" /usr/sbin/adduser)
+original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
+
+# Modifier les permissions pour permettre l'exécution par tous
+sudo chmod 755 /usr/sbin/adduser
+sudo chown root:root /usr/sbin/adduser
+
+echo "Tous les utilisateurs peuvent temporairement exécuter 'adduser'."
+
+# Ajouter /usr/sbin au PATH pour tous les utilisateurs de la session actuelle
+export PATH=$PATH:/usr/sbin
+
 if ! make install-systemd-debian || ! systemctl enable kamailio; then
-    echo ":: X La création de l'utilisateur kamailio n'a pas pu se faire. X" 
     echo ":: X La configuration de Kamailio avec systemd a échoué. X"
 fi
 systemctl enable kamailio
 systemctl daemon-reload
+# Restaurer les permissions originales
+sudo chmod "$original_permissions" /usr/sbin/adduser
+sudo chown "$original_owner" /usr/sbin/adduser
+
+echo "Permissions restaurées."
 
 PATH="/usr/local/sbin:$PATH"
 export PATH
