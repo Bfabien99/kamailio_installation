@@ -117,7 +117,7 @@ fi
 sleep 0.5
 ## Configuration des services systemd
 echo "## Configuration des services systemd pour Kamailio..."
-su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
+su -l
 if ! make install-systemd-debian || ! systemctl enable kamailio; then
     echo ":: X La création de l'utilisateur kamailio n'a pas pu se faire. X" 
     echo ":: X La configuration de Kamailio avec systemd a échoué. X"
