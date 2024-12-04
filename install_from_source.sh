@@ -125,7 +125,7 @@ original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
 sudo chmod 755 /usr/sbin/adduser
 sudo chown root:root /usr/sbin/adduser
 
-echo "Tous les utilisateurs peuvent temporairement exécuter 'adduser'."
+echo ":: Tous les utilisateurs peuvent temporairement exécuter 'adduser'."
 
 # Ajouter /usr/sbin au PATH pour tous les utilisateurs de la session actuelle
 export PATH=$PATH:/usr/sbin
@@ -141,8 +141,8 @@ sudo chown "$original_owner" /usr/sbin/adduser
 
 echo "Permissions restaurées."
 
-PATH="/usr/local/sbin:$PATH"
-export PATH
+echo ":: Ajout de kamailio dans le PATH"
+sed -i 's|^PATH=.*|&:/usr/local/sbin:/usr/local/bin|'
 
 sleep 0.5
 ## Fin
