@@ -99,6 +99,7 @@ fi
 sleep 0.5
 ## Compilation et installation
 echo "## Compilation et installation de Kamailio avec les modules db_mysql et tls..."
+make clean
 if ! make include_modules="db_mysql tls" cfg || ! make all || ! make install; then
     echo ":: XX La compilation ou l'installation de Kamailio a échoué. XX"
     exit 1
@@ -116,6 +117,7 @@ fi
 sleep 0.5
 ## Configuration des services systemd
 echo "## Configuration des services systemd pour Kamailio..."
+su -l -c "echo 'Vous êtes maintenant dans le mode su -l.' && whoami && exit"
 if ! make install-systemd-debian || ! systemctl enable kamailio; then
     echo ":: X La création de l'utilisateur kamailio n'a pas pu se faire. X" 
     echo ":: X La configuration de Kamailio avec systemd a échoué. X"
@@ -132,4 +134,5 @@ echo "## Installation et configuration de Kamailio terminées."
 echo ":: Vous pouvez démarrer Kamailio avec 'systemctl start kamailio'."
 kamailio -V
 echo "## Fin du programme d'installation de Kamailio"
+systemctl start kamailio
 exit 0
