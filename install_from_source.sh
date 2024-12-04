@@ -141,16 +141,17 @@ sudo chown "$original_owner" /usr/sbin/adduser
 
 echo "Permissions restaurées."
 
-PATH="$PATH:/usr/local/sbin"
-export PATH
-sed -i 's|^PATH=.*|&:/usr/local/sbin:/usr/local/bin|' /root/.bashrc
+echo "## Ajouter de kamailio dans le PATH"
+echo 'PATH=$PATH:.usr/local/sbin:/usr/local/bin' >> /root/.bashrc
+echo 'export PATH' >> /root/.bashrc
 source /root/.bashrc
+echo ":: Ecriture dans /root/.bashrc terminée.."
 
 sleep 0.5
 ## Fin
 echo "## Installation et configuration de Kamailio terminées."
 echo ":: Vous pouvez démarrer Kamailio avec 'systemctl start kamailio'."
-kamailio -V
+/usr/local/sbin/kamailio -V
 echo "## Fin du programme d'installation de Kamailio"
 systemctl start kamailio
 exit 0
