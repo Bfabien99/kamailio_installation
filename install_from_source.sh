@@ -125,8 +125,6 @@ original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
 sudo chmod 755 /usr/sbin/adduser
 sudo chown root:root /usr/sbin/adduser
 
-echo ":: Tous les utilisateurs peuvent temporairement exécuter 'adduser'."
-
 # Ajouter /usr/sbin au PATH pour tous les utilisateurs de la session actuelle
 export PATH=$PATH:/usr/sbin
 
@@ -135,16 +133,19 @@ if ! make install-systemd-debian || ! systemctl enable kamailio; then
 fi
 systemctl enable kamailio
 systemctl daemon-reload
+
 # Restaurer les permissions originales
 sudo chmod "$original_permissions" /usr/sbin/adduser
 sudo chown "$original_owner" /usr/sbin/adduser
 
 echo "Permissions restaurées."
 
-echo "## Ajouter de kamailio dans le PATH"
-PATH=$PATH:/usr/local/sbin:/usr/local/bin
-export PATH
-echo ":: Ajout dans le PATH terminée.."
+echo "## Copier et configurer le script d'initialisation"
+cp $kamailio_src/kamailio/pkg/kamailio/deb/debian/kamailio.init /etc/init.d/kamailio
+chmod 755 /etc/init.d/kamailio
+sed -i 's|^PATH=.*|&:/usr/local/sbin:/usr/local/bin|' /etc/init.d/kamailio
+sed -i 's|^DAEMON=/usr/sbin/kamailio|DAEMON=/usr/local/sbin/kamailio|' /etc/init.d/kamailio
+sed -i 's|^CFGFILE=/etc/\$NAME/kamailio.cfg|CFGFILE=/usr/local/etc/kamailio/kamailio.cfg|' /etc/init.d/kamailio
 
 sleep 0.5
 ## Fin
