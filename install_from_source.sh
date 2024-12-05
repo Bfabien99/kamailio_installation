@@ -179,8 +179,8 @@ config_file="/usr/local/etc/kamailio"
 # Modifier le fichier de configuration de Kamailio pour utiliser MySQL
 sed -i 's/^# DBENGINE=MYSQL/DBENGINE=MYSQL/' "$config_file/kamctlrc"
 sed -i "s/^# SIP_DOMAIN=kamailio.org/SIP_DOMAIN=$sip_domain/" "$config_file/kamctlrc"
-sed -i 's/^# DBRWPW=kamailiorw/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
-sed -i '/#KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
+sed -i 's/^# DBRWPW="kamailiorw"/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
+sed -i '/#!KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
 
 echo "La configuration a été mise à jour."
 kamdbctl create
