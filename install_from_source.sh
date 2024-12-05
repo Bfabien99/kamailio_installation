@@ -184,3 +184,16 @@ sed -i '/#!KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_US
 
 echo "La configuration a été mise à jour."
 kamdbctl create
+
+# Vérifier le code de retour de la commande
+if [ $? -eq 0 ]; then
+    echo "## Configuration terminée avec succès."
+else
+    echo "## Impossible de poursuivre. Erreur lors de la création de la base de données."
+    exit 1
+fi
+
+echo "## Création des utilisateurs test1 et test2"
+kamctl add test1 test1
+kamctl add test2 test2
+echo "## Toutes les configs ont été faites... tester en connectant les utilisateurs tests à partir d'un softphone(Zoiper)"
