@@ -183,4 +183,4 @@ sed -i 's/^# DBRWPW=kamailiorw/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
 sed -i '/#KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
 
 echo "La configuration a été mise à jour."
-kamdbctl
+kamdbctl create
