@@ -142,9 +142,9 @@ sudo chown "$original_owner" /usr/sbin/adduser
 echo "Permissions restaurées."
 
 echo "## Ajouter de kamailio dans le PATH"
-PATH=$PATH:/usr/local/sbin:/usr/local/bin
-export PATH
-echo ":: Ajout dans le PATH terminée.."
+echo 'PATH=$PATH:/usr/local/sbin' >> ~/.bashrc
+echo 'export PATH' >> ~/.bashrc
+source ~/.bashrc
 
 sleep 0.5
 ## Fin
