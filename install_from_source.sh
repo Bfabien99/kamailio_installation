@@ -160,3 +160,27 @@ echo "## Fin du programme d'installation de Kamailio"
 echo ":: Démarrage de kamailio."
 systemctl start kamailio
 kamailio
+
+echo "## Nous passons à la configuration de votre fichier /etc/kamailio/kamctlrc"
+
+# Demander le domaine SIP
+echo ">> Veuillez entrer votre domaine SIP :"
+read sip_domain
+
+# Vérifier si une valeur a été saisie
+if [ -z "$sip_domain" ]; then
+    echo "Aucun domaine SIP saisi. Veuillez relancer le script."
+    exit 1
+fi
+
+# Fichier de configuration
+config_file="/usr/local/etc/kamailio"
+
+# Modifier le fichier de configuration de Kamailio pour utiliser MySQL
+sed -i 's/^# DBENGINE=MYSQL/DBENGINE=MYSQL/' "$config_file/kamctlrc"
+sed -i "s/^# SIP_DOMAIN=kamailio.org/SIP_DOMAIN=$sip_domain/" "$config_file/kamctlrc"
+sed -i 's/^# DBRWPW=kamailiorw/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
+sed -i '/#KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
+
+echo "La configuration a été mise à jour."
+kamdbctl
