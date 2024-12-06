@@ -7,207 +7,251 @@ color_yellow() { echo -e "\e[33m$1\e[0m"; }
 color_blue() { echo -e "\e[34m$1\e[0m"; }
 
 ## welcome message
-color_yellow "## Welcome to the Kamailio 5.8 installation script."
-sleep 0.5
+welcome_message() {
+    color_yellow "## Welcome to the Kamailio 5.8 installation script."
+}
 
 ## Check if the script is run as root
-if [[ $EUID -ne 0 ]]; then
-    color_red ":: XX This script must be run with root privileges. Please try again with 'sudo'."
-    exit 1
-fi
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        color_red ":: XX This script must be run with root privileges. Please try again with 'sudo'."
+        exit 1
+    fi
+}
+
 
 ## Check the distribution
-if [[ -f /etc/os-release ]]; then
-    distribution=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
-    codename=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    color_green ":: System details: $distribution ($codename)"
-else
-    color_red ":: XX Unable to determine the distribution. Ensure your system uses /etc/os-release. XX"
-    exit 1
-fi
+check_distribution() {
+    if [[ -f /etc/os-release ]]; then
+        distribution=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
+        codename=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
+        color_green ":: System details: $distribution ($codename)"
+    else
+        color_red ":: XX Unable to determine the distribution. Ensure your system uses /etc/os-release. XX"
+        exit 1
+    fi
+}
+
 
 ## Check if Kamailio is already installed
-sleep 0.5
-color_yellow "## Checking if Kamailio is already installed"
-sleep 1
-if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
-    color_green ":: Kamailio is already installed on this system."
+check_kamailio_installed() {
     sleep 0.5
-    if command -v kamailio >/dev/null 2>&1; then
-        color_green ":: Using 'kamailio' via PATH to display the version."
-        kamailio -V
-    else
-        color_green ":: 'kamailio' is not in PATH, using /usr/local/sbin/kamailio."
-        /usr/local/sbin/kamailio -V
+    color_yellow "## Checking if Kamailio is already installed"
+    sleep 1
+    if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
+        color_green ":: Kamailio is already installed on this system."
+        sleep 0.5
+        if command -v kamailio >/dev/null 2>&1; then
+            color_green ":: Using 'kamailio' via PATH to display the version."
+            kamailio -V
+        else
+            color_green ":: 'kamailio' is not in PATH, using /usr/local/sbin/kamailio."
+            /usr/local/sbin/kamailio -V
+        fi
+        sleep 0.5
+        color_yellow "## Kamailio installation program ended."
+        exit 0
     fi
-    sleep 0.5
-    color_yellow "## Kamailio installation program ended."
-    exit 0
-fi
+}
+
 
 ## Update APT repositories
-sleep 0.5
-color_yellow "## Updating APT repositories..."
-sleep 1
-if ! apt update -y; then
-    color_yellow ":: X Failed to update APT repositories. X"
-    color_yellow "..."
-fi
+update_apt_repositories() {
+    sleep 0.5
+    color_yellow "## Updating APT repositories..."
+    sleep 1
+    if ! apt update -y; then
+        color_yellow ":: X Failed to update APT repositories. X"
+        color_yellow "..."
+    fi
+}
+
 
 ## Install dependencies
-color_yellow "## Installing required dependencies..."
-sleep 1
-deps=(make autoconf pkg-config git gcc g++ flex bison libssl-dev default-libmysqlclient-dev)
+install_dependencies() {
+    color_yellow "## Installing required dependencies..."
+    sleep 1
+    deps=(make autoconf pkg-config git gcc g++ flex bison libssl-dev default-libmysqlclient-dev)
 
-for dep in "${deps[@]}"; do
-    echo "Installing $dep..."
-    if ! apt install -y "$dep"; then
-        color_red ":: XX Failed to install $dep. XX"
-        exit 1
+    for dep in "${deps[@]}"; do
+        echo "Installing $dep..."
+        if ! apt install -y "$dep"; then
+            color_red ":: XX Failed to install $dep. XX"
+            exit 1
+        fi
+        sleep 0.5
+    done
+}
+
+## Prepare and install Kamailio
+prepare_kamailio_storage_and_install() {
+    ## Create the storage folder
+    color_yellow "## Preparing the folder for Kamailio..."
+    sleep 1
+    kamailio_src="/usr/local/src/kamailio-5.8"
+    if [[ ! -d $kamailio_src ]]; then
+        mkdir -p "$kamailio_src"
+        color_green ":: Folder created: $kamailio_src"
+    else
+        color_green ":: Folder already exists: $kamailio_src"
     fi
+
+    ## Clone the Git repository
     sleep 0.5
-done
-
-## Create the storage folder
-color_yellow "## Preparing the folder for Kamailio..."
-sleep 1
-kamailio_src="/usr/local/src/kamailio-5.8"
-if [[ ! -d $kamailio_src ]]; then
-    mkdir -p "$kamailio_src"
-    color_green ":: Folder created: $kamailio_src"
-else
-    color_green ":: Folder already exists: $kamailio_src"
-fi
-
-## Clone the Git repository
-sleep 0.5
-color_yellow "## Checking for the Kamailio repository in $kamailio_src..."
-sleep 1
-if [[ -d "$kamailio_src/kamailio/.git" ]]; then
-    color_green ":: The Kamailio repository is already cloned in $kamailio_src/kamailio."
-    color_green ":: Updating the existing repository..."
-    cd "$kamailio_src/kamailio" || exit
-    if git pull origin 5.8; then
-        color_green ":: The Kamailio repository was successfully updated."
+    color_yellow "## Checking for the Kamailio repository in $kamailio_src..."
+    sleep 1
+    if [[ -d "$kamailio_src/kamailio/.git" ]]; then
+        color_green ":: The Kamailio repository is already cloned in $kamailio_src/kamailio."
+        color_green ":: Updating the existing repository..."
+        cd "$kamailio_src/kamailio" || exit
+        if git pull origin 5.8; then
+            color_green ":: The Kamailio repository was successfully updated."
+        else
+            color_red ":: XX Failed to update the Git repository. XX"
+            exit 1
+        fi
     else
-        color_red ":: XX Failed to update the Git repository. XX"
+        color_green ":: Cloning the Kamailio repository into $kamailio_src..."
+        cd "$kamailio_src" || exit
+        if git clone --depth 1 --branch 5.8 https://github.com/kamailio/kamailio kamailio; then
+            color_green ":: The Kamailio repository was successfully cloned."
+            cd "kamailio"
+        else
+            color_red ":: XX Failed to clone the Git repository. Check your network connection. XX"
+            exit 1
+        fi
+    fi
+
+    ## Compile and install
+    sleep 0.5
+    color_yellow "## Compiling and installing Kamailio with db_mysql and tls modules..."
+    sleep 1
+    make clean
+    if ! make include_modules="db_mysql tls" cfg || ! make all || ! make install; then
+        color_red ":: XX Failed to compile or install Kamailio. XX"
         exit 1
     fi
-else
-    color_green ":: Cloning the Kamailio repository into $kamailio_src..."
-    cd "$kamailio_src" || exit
-    if git clone --depth 1 --branch 5.8 https://github.com/kamailio/kamailio kamailio; then
-        color_green ":: The Kamailio repository was successfully cloned."
-        cd "kamailio"
-    else
-        color_red ":: XX Failed to clone the Git repository. Check your network connection. XX"
-        exit 1
-    fi
-fi
+}
 
-## Compile and install
-sleep 0.5
-color_yellow "## Compiling and installing Kamailio with db_mysql and tls modules..."
-sleep 1
-make clean
-if ! make include_modules="db_mysql tls" cfg || ! make all || ! make install; then
-    color_red ":: XX Failed to compile or install Kamailio. XX"
-    exit 1
-fi
 
 ## Install MySQL server
-sleep 0.5
-color_yellow "## Installing the default MySQL server"
-sleep 1
-if ! apt -y install default-mysql-server; then
-    color_yellow ":: X Failed to install the default MySQL server. X"
-    color_yellow ":: X To use Kamailio with MySQL, you must install an SQL server later. X"
-    color_yellow "..."
-fi
+install_mysql_server() {
+    ## Install MySQL server
+    sleep 0.5
+    color_yellow "## Installing the default MySQL server"
+    sleep 1
+    if ! apt -y install default-mysql-server; then
+        color_yellow ":: X Failed to install the default MySQL server. X"
+        color_yellow ":: X To use Kamailio with MySQL, you must install an SQL server later. X"
+        color_yellow "..."
+    fi
+}
 
-sleep 0.5
-## Configure systemd services
-color_yellow "## Configuring systemd services for Kamailio..."
-sleep 1
 
-# Save 'adduser' default permission
-original_permissions=$(stat -c "%a" /usr/sbin/adduser)
-original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
+## Configure systemd service
+configure_systemd_services() {
+    ## Configure systemd services
+    sleep 0.5
+    color_yellow "## Configuring systemd services for Kamailio..."
+    sleep 1
 
-# Edit permission to set adduser available for kamailio
-sudo chmod 755 /usr/sbin/adduser
-sudo chown root:root /usr/sbin/adduser
-export PATH=$PATH:/usr/sbin
+    # Save 'adduser' default permission
+    original_permissions=$(stat -c "%a" /usr/sbin/adduser)
+    original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
 
-if ! make install-systemd-debian || ! systemctl enable kamailio; then
-    color_yellow ":: X Failed to configure Kamailio with systemd. X"
-fi
-systemctl enable kamailio
-systemctl daemon-reload
+    # Edit permission to set adduser available for kamailio
+    sudo chmod 755 /usr/sbin/adduser
+    sudo chown root:root /usr/sbin/adduser
+    export PATH=$PATH:/usr/sbin
 
-# Reset adduser default permission
-sudo chmod "$original_permissions" /usr/sbin/adduser
-sudo chown "$original_owner" /usr/sbin/adduser
+    if ! make install-systemd-debian || ! systemctl enable kamailio; then
+        color_yellow ":: X Failed to configure Kamailio with systemd. X"
+    fi
+    systemctl enable kamailio
+    systemctl daemon-reload
 
-sleep 0.5
-color_yellow "## Adding Kamailio to the PATH"
-sleep 1
-echo 'PATH=$PATH:/usr/local/sbin' >> ~/.bashrc
-echo 'export PATH' >> ~/.bashrc
-source ~/.bashrc
+    # Reset adduser default permission
+    sudo chmod "$original_permissions" /usr/sbin/adduser
+    sudo chown "$original_owner" /usr/sbin/adduser
 
-sleep 0.5
-color_yellow "## Kamailio installation and configuration completed."
-sleep 1
-if command -v kamailio >/dev/null 2>&1; then
+    sleep 0.5
+    color_yellow "## Adding Kamailio to the PATH"
+    sleep 1
+    echo 'PATH=$PATH:/usr/local/sbin' >> ~/.bashrc
+    echo 'export PATH' >> ~/.bashrc
+    source ~/.bashrc
+
+    sleep 0.5
+    color_yellow "## Kamailio installation and configuration completed."
+    sleep 1
+    if command -v kamailio >/dev/null 2>&1; then
         color_green ":: Using 'kamailio' via PATH to display the version."
         kamailio -V
     else
         color_yellow ":: X 'kamailio' was not added to the PATH. Using /usr/local/sbin/kamailio.X "
         /usr/local/sbin/kamailio -V
     fi
-color_yellow "## Kamailio installation program ended."
-color_green ":: Starting Kamailio."
-systemctl start kamailio
-kamailio
+    color_yellow "## Kamailio installation program ended."
+    color_green ":: Starting Kamailio."
+    systemctl start kamailio
+    kamailio
+}
 
-sleep 0.5
-color_yellow "## Proceeding to configure your configuration files"
-sleep 1
-color_yellow ">> Please enter your SIP domain:"
-read sip_domain
-
-while [ -z "$sip_domain" ]; do
-    color_yellow "No SIP domain entered. Please try again:"
+## Configure config file
+configure_config_files() {
+    sleep 0.5
+    color_yellow "## Proceeding to configure your configuration files"
+    sleep 1
+    color_yellow ">> Please enter your SIP domain:"
     read sip_domain
-done
 
-config_file="/usr/local/etc/kamailio"
+    while [ -z "$sip_domain" ]; do
+        color_yellow "No SIP domain entered. Please try again:"
+        read sip_domain
+    done
 
-sed -i 's/^# DBENGINE=MYSQL/DBENGINE=MYSQL/' "$config_file/kamctlrc"
-sed -i "s/^# SIP_DOMAIN=kamailio.org/SIP_DOMAIN=$sip_domain/" "$config_file/kamctlrc"
-sed -i 's/^# DBRWPW="kamailiorw"/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
-sed -i '/#!KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
+    config_file="/usr/local/etc/kamailio"
 
-sleep 0.5
-color_green ":: Configuration updated."
-kamdbctl create
+    sed -i 's/^# DBENGINE=MYSQL/DBENGINE=MYSQL/' "$config_file/kamctlrc"
+    sed -i "s/^# SIP_DOMAIN=kamailio.org/SIP_DOMAIN=$sip_domain/" "$config_file/kamctlrc"
+    sed -i 's/^# DBRWPW="kamailiorw"/DBRWPW="kamailiorw"/' "$config_file/kamctlrc"
+    sed -i '/#!KAMAILIO/a \#!define WITH_MYSQL\n#!define WITH_AUTH\n#!define WITH_USRLOCDB' "$config_file/kamailio.cfg"
+}
 
-sleep 0.5
-# Variables pour l'utilisateur
-user1="test"
-password1=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 12)
+## Configure kamailio database & create test user
+create_test_user() {
+    sleep 0.5
+    color_green ":: Configuration updated."
+    kamdbctl create
 
-sleep 0.5
-color_yellow "## Creating a test user : $user"
-sleep 1
+    sleep 0.5
+    # Variables pour l'utilisateur
+    user1="test"
+    password1=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 12)
 
-color_green ":: Adding user $user1 with the generated password..."
-kamctl add "$user1" "$password1"
+    sleep 0.5
+    color_yellow "## Creating a test user : $user1"
+    sleep 1
 
-if [ $? -eq 0 ]; then
-    color_green ":: User $user1 successfully added. Password: $password1"
-else
-    color_yellow ":: X Failed to add user $user1. X"
-fi
+    color_green ":: Adding user $user1 with the generated password..."
+    kamctl add "$user1" "$password1"
+
+    if [ $? -eq 0 ]; then
+        color_green ":: User $user1 successfully added. Password: $password1"
+    else
+        color_yellow ":: X Failed to add user $user1. X"
+    fi
+}
+
+# Main execution
+check_root
+check_distribution
+check_kamailio_installed
+update_apt
+install_dependencies
+create_storage_and_clone_repo
+compile_and_install_kamailio
+install_mysql
+configure_systemd
+create_test_user
 color_yellow "## End of the script"
