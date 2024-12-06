@@ -19,7 +19,6 @@ check_root() {
     fi
 }
 
-
 ## Check the distribution
 check_distribution() {
     if [[ -f /etc/os-release ]]; then
@@ -31,7 +30,6 @@ check_distribution() {
         exit 1
     fi
 }
-
 
 ## Check if Kamailio is already installed
 check_kamailio_installed() {
@@ -53,7 +51,6 @@ check_kamailio_installed() {
         exit 0
     fi
 }
-
 
 ## Update APT repositories
 update_apt_repositories() {
@@ -133,7 +130,6 @@ prepare_kamailio_storage_and_install() {
     fi
 }
 
-
 ## Install MySQL server
 install_mysql_server() {
     ## Install MySQL server
@@ -146,7 +142,6 @@ install_mysql_server() {
         color_yellow "..."
     fi
 }
-
 
 ## Configure systemd service
 configure_systemd_services() {
@@ -244,14 +239,15 @@ create_test_user() {
 }
 
 # Main execution
+welcome_message
 check_root
 check_distribution
 check_kamailio_installed
-update_apt
+update_apt_repositories
 install_dependencies
-create_storage_and_clone_repo
-compile_and_install_kamailio
-install_mysql
-configure_systemd
+prepare_kamailio_storage_and_install
+install_mysql_server
+configure_systemd_services
+configure_config_files
 create_test_user
 color_yellow "## End of the script"
