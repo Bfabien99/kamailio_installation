@@ -199,3 +199,4 @@ if [ $? -eq 0 ]; then
 else
     echo "Échec lors de l'ajout de l'utilisateur $user1."
 fi
+echo "## End of the script"
