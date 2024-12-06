@@ -177,17 +177,25 @@ sleep 0.5
 echo ":: Configuration updated."
 kamdbctl create
 
-if [ $? -eq 0 ]; then
-    echo "## Configuration completed successfully."
-else
-    echo ":: X An error occurred. X"
-    exit 1
-fi
+sleep 0.5
+# Générer un mot de passe aléatoire de 12 caractères
+generate_password() {
+    openssl rand -base64 12 | tr -dc 'a-zA-Z0-9@#$%&' | head -c 12
+}
+
+# Variables pour l'utilisateur
+user1="test"
+password1=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 12)
 
 sleep 0.5
-echo "## Creating test1 and test2 users"
+echo "## Creating a test user : $user"
 sleep 1
-kamctl add test1 test1
-sleep 0.5
-kamctl add test2 test2
-sleep 0.5
+
+echo "Ajout de l'utilisateur $user1 avec le mot de passe généré..."
+kamctl add "$user1" "$password1"
+
+if [ $? -eq 0 ]; then
+    echo "Utilisateur $user1 ajouté avec succès. Mot de passe : $password1"
+else
+    echo "Échec lors de l'ajout de l'utilisateur $user1."
+fi
