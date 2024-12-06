@@ -6,6 +6,7 @@ color_green() { echo -e "\e[32m$1\e[0m"; }
 color_yellow() { echo -e "\e[33m$1\e[0m"; }
 color_blue() { echo -e "\e[34m$1\e[0m"; }
 
+## welcome message
 color_yellow "## Welcome to the Kamailio 5.8 installation script."
 sleep 0.5
 
@@ -25,8 +26,8 @@ else
     exit 1
 fi
 
-sleep 0.5
 ## Check if Kamailio is already installed
+sleep 0.5
 color_yellow "## Checking if Kamailio is already installed"
 sleep 1
 if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; then
@@ -44,8 +45,8 @@ if [[ -x /usr/local/sbin/kamailio ]] || command -v kamailio >/dev/null 2>&1; the
     exit 0
 fi
 
-sleep 0.5
 ## Update APT repositories
+sleep 0.5
 color_yellow "## Updating APT repositories..."
 sleep 1
 if ! apt update -y; then
@@ -78,8 +79,8 @@ else
     color_green ":: Folder already exists: $kamailio_src"
 fi
 
-sleep 0.5
 ## Clone the Git repository
+sleep 0.5
 color_yellow "## Checking for the Kamailio repository in $kamailio_src..."
 sleep 1
 if [[ -d "$kamailio_src/kamailio/.git" ]]; then
@@ -104,8 +105,8 @@ else
     fi
 fi
 
-sleep 0.5
 ## Compile and install
+sleep 0.5
 color_yellow "## Compiling and installing Kamailio with db_mysql and tls modules..."
 sleep 1
 make clean
@@ -114,6 +115,7 @@ if ! make include_modules="db_mysql tls" cfg || ! make all || ! make install; th
     exit 1
 fi
 
+## Install MySQL server
 sleep 0.5
 color_yellow "## Installing the default MySQL server"
 sleep 1
@@ -127,6 +129,12 @@ sleep 0.5
 ## Configure systemd services
 color_yellow "## Configuring systemd services for Kamailio..."
 sleep 1
+
+# Save 'adduser' default permission
+original_permissions=$(stat -c "%a" /usr/sbin/adduser)
+original_owner=$(stat -c "%U:%G" /usr/sbin/adduser)
+
+# Edit permission to set adduser available for kamailio
 sudo chmod 755 /usr/sbin/adduser
 sudo chown root:root /usr/sbin/adduser
 export PATH=$PATH:/usr/sbin
@@ -136,6 +144,8 @@ if ! make install-systemd-debian || ! systemctl enable kamailio; then
 fi
 systemctl enable kamailio
 systemctl daemon-reload
+
+# Reset adduser default permission
 sudo chmod "$original_permissions" /usr/sbin/adduser
 sudo chown "$original_owner" /usr/sbin/adduser
 
